@@ -49,12 +49,12 @@ class RecipeDao(Resource):
     @staticmethod
     def put():
         try:
-            id = request.json['id']
+            recipeId = request.json['id']
         except Exception as _:
-            id = None
-        if not id:
+            recipeId = None
+        if not recipeId:
             return jsonify({'Message': 'Must provide the recipe ID'})
-        recipe = Recipe.query.get(id)
+        recipe = Recipe.query.get(recipeId)
 
         name = request.json['name']
         instructions = request.json['instructions']
