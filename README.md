@@ -71,7 +71,12 @@ These requirements can also be seen in the repositories package.json:
 ## Rest Api Requirements 
 The rest api supporting the UI is a flask server
 
-These requirements can also be seen in the api repositories package.json:
+These requirements can also be seen in the api repositories requirements.txt:
 ```
-
+Flask~=1.1.2
+Flask-Cors~=3.0.10
+Flask-RESTful~=0.3.8
+Flask_SQLAlchemy~=2.5.1
+flask-marshmallow~=0.14.0
+marshmallow-sqalchemy~=0.24.2
 ```
