@@ -50,6 +50,12 @@ Ingredients have the following:
 * unit - string
 * recipe_id - FK(recipe)
 
+### Cuisine
+cuisine is a table representing a portable enumeration.
+The current possible values of cuisine are as follows:
+* AMERICAN
+* CHINESE
+
 ## User Interface Requirements
 The UI is running on a JS React webserver
 
