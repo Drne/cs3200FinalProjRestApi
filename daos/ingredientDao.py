@@ -4,8 +4,8 @@ from flask_restful import Resource
 from app import db
 from models.ingredientModel import Ingredient, IngredientSchema
 
-user_schema = IngredientSchema()
-users_schema = IngredientSchema(many=True)
+ingredient_schema = IngredientSchema()
+Ingredients_schema = IngredientSchema(many=True)
 
 
 class IngredientDao(Resource):
@@ -17,26 +17,26 @@ class IngredientDao(Resource):
             id = None
 
         try:
-            recipe_id = request.args['recipe_id']
+            recipe_id = request.args['recipeId']
         except Exception as _:
             recipe_id = None
 
-        if not id:
-            ingredients = Ingredient.query.all()
-            return jsonify(users_schema.dump(ingredients))
+        if recipe_id:
+            ingredients = Ingredient.query.filter_by(recipe_id=int(recipe_id)).all()
+            return jsonify(Ingredients_schema.dump(ingredients))
 
-        elif recipe_id:
-            ingredients = Ingredient.query.filter_by(recipe_id=int(recipe_id))
-            return jsonify(users_schema.dump(ingredients))
+        elif not id:
+            ingredients = Ingredient.query.all()
+            return jsonify(Ingredients_schema.dump(ingredients))
         ingredient = Ingredient.query.get(id)
-        return jsonify(user_schema.dump(ingredient))
+        return jsonify(ingredient_schema.dump(ingredient))
 
     @staticmethod
     def post():
-        description = request.args['description']
-        amount = request.args['amount']
-        unit = request.args['unit']
-        recipe_id = request.args['recipeId']
+        description = request.json['description']
+        amount = request.json['amount']
+        unit = request.json['unit']
+        recipe_id = request.json['recipeId']
 
         ingredient = Ingredient(description, amount, unit, recipe_id)
         db.session.add(ingredient)
@@ -48,17 +48,17 @@ class IngredientDao(Resource):
     @staticmethod
     def put():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:
             return jsonify({'Message': 'Must provide the user ID'})
         ingredient = Ingredient.query.get(id)
 
-        description = request.args['description']
-        amount = request.args['amount']
-        unit = request.args['unit']
-        recipe_id = request.args['recipeId']
+        description = request.json['description']
+        amount = request.json['amount']
+        unit = request.json['unit']
+        recipe_id = request.json['recipeId']
 
         ingredient.description = description
         ingredient.amount = amount
@@ -73,7 +73,7 @@ class IngredientDao(Resource):
     @staticmethod
     def delete():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:

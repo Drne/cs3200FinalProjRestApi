@@ -24,34 +24,35 @@ class UserDao(Resource):
 
     @staticmethod
     def post():
-        username = request.args['username']
-        password = request.args['password']
-        first_name = request.args['first_name']
-        last_name = request.args['last_name']
-        email = request.args['email']
+        username = request.json['username']
+        password = request.json['password']
+        first_name = request.json['first_name']
+        last_name = request.json['last_name']
+        email = request.json['email']
 
         user = User(username, password, first_name, last_name, email)
         db.session.add(user)
         db.session.commit()
         return jsonify({
-            'Message': f'User {first_name} {last_name} inserted.'
+            'Message': f'User {first_name} {last_name} inserted.',
+            "id": user.id
         })
 
     @staticmethod
     def put():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:
             return jsonify({'Message': 'Must provide the user ID'})
         user = User.query.get(id)
 
-        username = request.args['username']
-        password = request.args['password']
-        first_name = request.args['first_name']
-        last_name = request.args['last_name']
-        email = request.args['email']
+        username = request.json['username']
+        password = request.json['password']
+        first_name = request.json['first_name']
+        last_name = request.json['last_name']
+        email = request.json['email']
 
         user.username = username
         user.password = password
@@ -67,7 +68,7 @@ class UserDao(Resource):
     @staticmethod
     def delete():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:

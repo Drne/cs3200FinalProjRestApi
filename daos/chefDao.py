@@ -3,6 +3,7 @@ from flask_restful import Resource
 
 from app import db
 from models.chefModel import Chef, ChefSchema
+from models.userModel import User
 
 chef_schema = ChefSchema()
 chefs_schema = ChefSchema(many=True)
@@ -17,9 +18,14 @@ class ChefDao(Resource):
             id = None
 
         if not id:
-            chefs = Chef.query.all()
+            chefs = Chef.query.join(User, User.id == Chef.id).add_columns(
+                Chef.cuisine_specialty,
+                User.first_name, User.last_name, User.email, User.username, User.password, Chef.id).all()
             return jsonify(chefs_schema.dump(chefs))
-        chef = Chef.query.get(id)
+        # chef = Chef.query.get(id)
+        chef = Chef.query.filter_by(id=id).join(User, User.id == Chef.id).add_columns(
+                Chef.cuisine_specialty,
+                User.first_name, User.last_name, User.email, User.username, User.password, Chef.id).first()
         return jsonify(chef_schema.dump(chef))
 
     @staticmethod
@@ -31,13 +37,13 @@ class ChefDao(Resource):
         db.session.add(customer)
         db.session.commit()
         return jsonify({
-            'Message': f'Customer inserted.'
+            'Message': f'Chef inserted.'
         })
 
     @staticmethod
     def put():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:
@@ -59,7 +65,7 @@ class ChefDao(Resource):
     @staticmethod
     def delete():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:

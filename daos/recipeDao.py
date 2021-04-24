@@ -16,6 +16,15 @@ class RecipeDao(Resource):
         except Exception as _:
             id = None
 
+        try:
+            chefId = request.args['chefId']
+        except Exception as _:
+            chefId = None
+
+        if chefId:
+            recipes = Recipe.query.filter_by(author=int(chefId)).all()
+            return jsonify(recipes_schema.dump(recipes))
+
         if not id:
             recipes = Recipe.query.all()
             return jsonify(recipes_schema.dump(recipes))
@@ -24,11 +33,12 @@ class RecipeDao(Resource):
 
     @staticmethod
     def post():
-        name = request.args['name']
-        instructions = request.args['instructions']
-        author = request.args['author']
-        cuisine = request.args['cuisine']
-
+        print(request.json)
+        name = request.json['name']
+        instructions = request.json['instructions']
+        author = request.json['author']
+        cuisine = request.json['cuisine']
+        print(author)
         recipe = Recipe(instructions, name, author, cuisine)
         db.session.add(recipe)
         db.session.commit()
@@ -39,17 +49,17 @@ class RecipeDao(Resource):
     @staticmethod
     def put():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:
-            return jsonify({'Message': 'Must provide the user ID'})
+            return jsonify({'Message': 'Must provide the recipe ID'})
         recipe = Recipe.query.get(id)
 
-        name = request.args['name']
-        instructions = request.args['instructions']
-        author = request.args['author']
-        cuisine = request.args['cuisine']
+        name = request.json['name']
+        instructions = request.json['instructions']
+        author = request.json['author']
+        cuisine = request.json['cuisine']
 
         recipe.name = name
         recipe.instructions = instructions
@@ -64,7 +74,7 @@ class RecipeDao(Resource):
     @staticmethod
     def delete():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:

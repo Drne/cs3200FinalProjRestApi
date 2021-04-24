@@ -3,6 +3,7 @@ from flask_restful import Resource
 
 from app import db
 from models.customerModel import Customer, CustomerSchema
+from models.userModel import User
 
 user_schema = CustomerSchema()
 users_schema = CustomerSchema(many=True)
@@ -17,10 +18,12 @@ class CustomerDao(Resource):
             id = None
 
         if not id:
-            users = Customer.query.all()
-            return jsonify(users_schema.dump(users))
-        user = Customer.query.get(id)
-        return jsonify(user_schema.dump(user))
+            customers = Customer.query.join(User, User.id == Customer.id).add_columns(
+                User.first_name, User.last_name, User.email, User.username, User.password, Customer.id).all()
+            return jsonify(users_schema.dump(customers))
+        customer = Customer.query.filter_by(id=id).join(User, User.id == Customer.id).add_columns(
+                User.first_name, User.last_name, User.email, User.username, User.password, Customer.id).first()
+        return jsonify(user_schema.dump(customer))
 
     @staticmethod
     def post():
@@ -36,7 +39,7 @@ class CustomerDao(Resource):
     @staticmethod
     def put():
         try:
-            id = request.args['id']
+            id = request.json['id']
         except Exception as _:
             id = None
         if not id:

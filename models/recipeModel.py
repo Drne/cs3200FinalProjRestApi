@@ -1,4 +1,5 @@
 from app import db, ma
+from models.chefModel import Chef
 
 
 class Recipe(db.Model):
@@ -6,6 +7,7 @@ class Recipe(db.Model):
     instructions = db.Column(db.String(45))
     name = db.Column(db.String(45))
     author = db.Column(db.Integer, db.ForeignKey('chef.id'))
+    authorObj = db.relationship(Chef, backref='recipes')
     cuisine = db.Column(db.String(45))
 
     def __init__(self, instructions, name, author, cuisine):
@@ -17,4 +19,5 @@ class Recipe(db.Model):
 
 class RecipeSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'instructions', 'name', 'author', 'cuisine')
+        fields = (
+            'id', 'instructions', 'name', 'author', 'authorObj.user.first_name', 'authorObj.user.last_name', 'cuisine')

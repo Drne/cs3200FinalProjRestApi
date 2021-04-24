@@ -10,4 +10,4 @@ class Customer(db.Model):
 
 class CustomerSchema(ma.Schema):
     class Meta:
-        fields = ('id',)
+        fields = ('id', 'first_name', 'last_name', 'username', 'password', 'email')

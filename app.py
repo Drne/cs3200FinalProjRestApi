@@ -2,11 +2,15 @@ from flask import Flask
 from flask_marshmallow import Marshmallow
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 app = Flask(__name__)
 
 api = Api(app)
 
+cors = CORS(app)
+
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12Ozymandias!@localhost:3306/recipe_share'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
